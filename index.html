@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IoT Project 2017</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="./logo/iot_logo.png">
+	<script type="text/javascript" src="./login/iot-user.js"></script>
+</head>
+<script type="text/javascript">
+	function iot_onload() {
+	    if (iot_is_login() === false) {
+	        window.location.href = "./login/index.html";
+	    }
+	    else
+	    {
+	    	window.location.href = "./main.html";
+	    }
+	}
+
+	if (window.addEventListener)
+	{
+	    window.addEventListener("load", iot_onload, false);
+	}
+	else if (window.attachEvent)
+	{
+	    window.attachEvent("onload", iot_onload);
+	}
+	else
+	{
+		window.onload = iot_onload;
+	} 
+
+</script>
+
+<body>
+</body>
+</html>

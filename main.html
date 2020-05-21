@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hệ thống điều khiển và giám sát thiết bị điện 2018</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="./logo/iot_logo.png">
+	<script type="text/javascript" src="./login/iot-user.js"></script>
+	<script type="text/javascript" src="./js/mqttws31.js"></script>
+	<script type="text/javascript" src="./js/connect-event.js"></script>
+	<script type="text/javascript" src="./js/cambien.js"></script>
+	<script type="text/javascript" src="./js/youtube-link.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="./css/message.css">
+	<link rel="stylesheet" type="text/css" href="./css/header-bar.css">
+	<link rel="stylesheet" type="text/css" href="./css/table-control.css">
+	<link rel="stylesheet" type="text/css" href="./css/link-effect.css">
+	<link rel="stylesheet" type="text/css" href="./css/checkbox.css">
+	<link rel="stylesheet" type="text/css" href="./css/cambien.css">
+</head>
+
+
+<script type="text/javascript">
+	function iot_onload() {
+		$("topic_subscribe").value = "ESP8266_SEND";
+		$("topic_publish").value = "ESP8266_RECEIVE";
+		
+		return ;
+	    if (iot_is_login() === false) {
+	        window.location.href = "./login/index.html";
+	    }
+	}
+
+	if (window.addEventListener)
+	{
+	    window.addEventListener("load", iot_onload, false);
+	}
+	else if (window.attachEvent)
+	{
+	    window.attachEvent("onload", iot_onload);
+	}
+	else 
+	{
+		window.onload = iot_onload;
+	}
+</script>
+
+<style type="text/css">
+	body, html {
+	  /*height: 100%;*/
+	  margin: 0;
+	  font: 400 15px/1.8 "Lato", sans-serif;
+	  color: #777;
+	  background: #FFFFFF;
+	  -webkit-text-size-adjust:none;
+	}
+
+	.fb-widget {
+		text-align: center;
+	    margin: 0 auto;
+	    display: block!important;
+	    z-index: 0;
+	}
+
+	h1, h2, h3, h4 {
+		margin-bottom: 5px;
+		margin-top: 5px;
+	}
+
+	ul {
+		margin-top: 0px;
+	}
+
+	.paragraph_report p {
+	    text-indent: 50px;
+	    text-align: justify;
+	    letter-spacing: 1px;
+	}
+
+	a {
+	    text-decoration: none;
+	    color: #008CBA;
+	}
+
+@media all and (min-width: 1024px) {
+	#connect {
+		padding: 30px 50px;
+	}
+}
+@media all and (min-width: 650px) and (max-width: 650px) {
+	#connect {
+		padding: 30px 0px;
+	}
+}
+
+@media all and (min-width: 650px) {
+	.spliter {
+	   width: 100%;
+	   border: 1px solid #8dc5ec;
+	   padding: 7px;
+	   overflow: auto;
+	   margin: 0px auto;
+	   padding-bottom: 0px;
+	}
+
+	#post {
+	   width: 42%;
+	   height: 610px;
+	   float: left;
+	}
+
+	#sidebar {
+		width: 56%;
+		height: 610px;
+		float: right;
+	}
+
+	#middle_line {
+		width: 2px;
+		height: 610px;
+		margin-left: 1%;
+		margin-right: 0.5%;
+		background-color: #8dc5ec;
+		float: center;
+		display: inline-block;
+	}
+}
+
+/*di động*/
+@media all and (max-width: 650px) {
+	.spliter {
+		padding: 30px 0px;
+		padding-bottom: 0px;
+	}
+	#post {
+	   display: block;
+	}
+
+	#sidebar {
+		display: block;
+	}
+
+	#middle_line {
+		display: none;
+	}
+
+	#connect {
+		padding: 0px 5px;
+	}
+}
+
+/*Nha mo hinh*/
+@media all and (min-width: 650px) {
+	.spliter2 {
+	   width: 100%;
+	   //border: 1px solid #8dc5ec;
+	   padding: 7px;
+	   overflow: auto;
+	   margin: 0px auto;
+	}
+	#mohinh_left {
+	   width: 50%;
+	   //height: 300px;
+	   float: left;
+	}
+
+	#mohinh_right {
+		width: 40%;
+		//height: 300px;
+		float: right;
+		margin-right: 7%;
+		//background-color: #ABABAB;
+	}
+
+	#middle_line2 {
+		width: 1px;
+		height: 200px;
+		margin-top: 75px;
+		margin-left: 1%;
+		margin-right: 1%;
+		background-color: #5389fd;
+		float: center;
+		vertical-align: middle;
+		display: inline-block;
+	}
+}
+
+/*di động*/
+@media all and (max-width: 650px) {
+	.spliter2 {
+		padding: 30px 0px;
+		padding-bottom: 0px;
+	}
+	#mohinh_left{
+	   display: block;
+	   margin-bottom: 20px;
+	}
+
+	#mohinh_right {
+		display: block;
+		margin-left: 1%;
+		margin-right: 1%;
+	}
+
+	#middle_line2 {
+		display: none;
+	}
+}
+
+.step-border {
+	background-color: #b5b5b542;
+	display: block;
+	padding: 5px 10px;
+	margin-bottom: 10px;
+
+}
+
+
+
+</style>
+
+
+<!--- Body website -->
+<body>
+<div id="fb-root"></div>
+	<script>
+		/*Script for Facebook plugin*/
+		(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.12&appId=280256195786686&autoLogAppEvents=1';
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	</script>
+
+
+	<div class="header-bar">
+		<button id="header-home" title="Trang chủ">Trang chủ</button>
+		<button id="header-product" title="Sản phẩm">Sản phẩm</button>
+		<button id="header-connect" title="Kết nối"> Kết nối</button>
+		<button id="header-control" title="Điều khiển"> Điều khiển</button>
+		<!--button id="header-idea" title="Hướng dẫn"></button-->
+		<button id="header-user" title="Đăng xuất khỏi hệ thống"> user.admin</button>
+	</div>
+
+
+	<!--- home Tab -->
+	<div id="home" class="main-tab-content">
+		<div class="background-test">
+		  	<div class="background-caption">
+			    <span class="border">HỘI THI</span><br>
+			    <span class="border">SÁNG TẠO KHOA HỌC CÔNG NGHỆ</span></br>
+			    <span class="border">CỦA HỌC SINH, SINH VIÊN NĂM HỌC 2017-2018</span></br>
+			    <span class="sub-border">Đơn vị: Đại đội 1 - Tiểu đoàn 26.</span>
+			</div>
+		</div>
+		<div style="padding-top: 600px;"></div>
+		<img src="./image/logo_tcu.png" style="margin: 30px auto; display: block; padding-top: 100px;">
+		<div style="text-align: center; margin-top: 50px;">
+			<div style="font-size: 24px;">Sản phẩm dự thi Sáng tạo Khoa Học Công Nghệ</div>
+			<div style="font-size: 18px; font-style: italic;">Tên sản phẩm: "Hệ thống điểu khiển và giám sát thiết bị điện"</div>
+			<div style="font-size: 18px;">Đơn vị: Đại đội 1, Tiểu đoàn 26</div>
+		</div>
+		<div style="margin-top: 400px;"> </div>
+		<h2 style="text-align: center;">Phản hồi</h2>
+		<!-- register event -->
+		<script type="text/javascript" src="./js/header-event.js"></script>
+		<div class="fb-comments fb-widget" data-href="https://hercules2404.github.io/IoT" data-numposts="10" data-width="800" data-order-by="reverse_time"></div>
+	</div>
+
+
+	<!--- Idea Tab -->
+	<div id="idea" class="main-tab-content">
+		<div style="padding: 25px 25px;">This is idea page
+		</div>
+	</div>
+
+
+	<!--- Product Tab -->
+	<div id="product" class="main-tab-content tab-content-align paragraph_report">
+		<div style="padding: 10px;"></div>
+		<h2 align="center" style="margin-bottom: 0px!important;">Phần I</h2>
+		<h3 align="center" style="margin-top: 0px!important;">Giới thiệu chung về hệ thống điều khiển và giám sát thiết bị điện</h3>
+		<p>"Hệ thống điều khiển và giám sát thiết bị điện" được nhóm nghiên cứu và phát triển để đáp ứng nhu cầu của thực tế về một hệ thống quản lý và giám sát hoàn chỉnh cho các thiết bị điện trong nhà, trong gia đình, tại nơi làm việc,... với tốc độ đáp ứng nhanh chóng, chính xác trong môi trường mạng ít ổn định, băng thông thấp, hay xảy ra nghẽn mạng mà các phương pháp cũ thường hoạt động không ổn định khi gặp phải những vấn đề về mạng này. Thông qua đó, đây là sản phẩm nền tảng để phát triển và ứng dụng vào nhiều dự án IoT (Internet of Things) khác nhau. Dưới đây là sơ đồ khối tổng quát của hệ thống:</p>
+		<a href=".\image\system-diagram.png"><img src=".\image\system-diagram.png" align="center" style="margin: 0px auto; display: block; width: 90%;"></a>
+		<p>Hệ thống có thể được điều khiển từ nhiều thiết bị cùng một thời điểm theo thời gian thực, với yêu cầu duy nhất là có thể kết nối được mạng internet và có trình duyệt truy cập vào internet giúp điều khiển hệ thống. Ví dụ điện thoại smartphone, smart tivi, máy tính,... Website hoạt động được trên nhiều nền tảng và nhiều trình duyệt khác nhau, tuy nhiên hoạt động tốt nhất là trên trình duyệt google chrome. </p>
+		<p>Người sử dụng cùng lúc có thế giám sát và kiểm tra tình trạng hoạt động của các thiết bị điện, kết hợp giám sát an ninh, chống trộm,... thông qua camera ip được tích hợp vào trong website điều khiển.</p>
+
+
+		<div style="padding: 10px;"></div>
+		<h2 align="center" style="margin-bottom: 0px!important;">Phần II</h2>
+		<h3 align="center" style="margin-top: 0px!important;">Nguyên Lý Hoạt Động Của Hệ Thống</h3>
+		<p>Các cảm biến và thiết bị điện được xử lý tín hiệu và điều khiển thống qua giao thức MQTT. <a href="http://mqtt.org/">MQTT</a> (Message Queuing Telemetry Transport) là giao thức truyền tin mới, rất đơn giản và tiết kiệm theo mô hình publish/subscribe (tạm dịch là cung cấp/đăng kí) bản tin. <a href="http://mqtt.org/">MQTT</a> được thiết kế dành cho các thiết bị và hệ thống mạng có băng thông nhỏ, độ trễ cao hoặc không ổn định. Nguyên lý hoạt động của <a href="http://mqtt.org/">MQTT</a> nhằm làm tối thiểu hóa yêu cầu về băng thông của mạng, tài nguyên của thiết bị đồng thời cũng đảm bảo độ ổn định, chính xác cho quá trình truyền, nhận thông tin. Ngoài ra, nguyên lý trên còn là một giao thức kết nối máy với máy machine-to-machine (M2M) hoặc kết nối vạn vật (IoT) trong các ứng dụng dành cho điện thoại có băng thông và nguồn pin trung bình.</p>
+		<p> Đây cũng là giao thức kết nối được các công ty lớn tin dùng và ứng dụng vào sản phẩm của mình như Facebook (Facebook Messenger), Microsoft (dịch vụ điện toán đám mây Microsoft Azure), Amazon (Amazon Web Services),... </p>
+		<a href=".\image\mqtt.png"><img src=".\image\mqtt.png" align="center" style="margin: 0px auto; display: block; width: 90%;"></a>
+		<p>Trong một hệ thống sử dụng giao thức MQTT, nhiều thiết bị hay cảm biến (mqtt client - gọi tắt client) kết nối tới máy chủ MQTT (gọi là MQTT broker) và đăng kí một hoặc vài kênh topic (chủ đề) để nhận tin và gửi lại tín hiệu tin tức lên máy chủ MQTT, thông qua giao thức TCP/IP. Ở hệ thống này, máy chủ MQTT được chọn ở website <a href="www.cloudmqtt.com">www.cloudmqtt.com</a>. MQTT broker này giao tiếp với người dùng qua website bằng giao thức WebSocket và điều khiển tín hiệu tới các thiết bị IoT bằng giao thức MQTT. Thiết bị mqtt client kết nối internet trong hệ thông này là mạch tích hợp ESP8266 12E trong board mạch NodeMCU 1.0. Ngoài ra, do giới hạn số chân của board mạch ESP8266 và đảm bảo tính ổn định của hệ thống, vi điều khiển ATmega328 được sử dụng để điều khiển các thiết bị ngoại vi đầu cuối.</p>
+		<p>So sánh giữa hai giao thức MQTT (Publish/Subscribe) với giao thức HTTPS (GET/POST) truyền thống trong môi trường mạng 3G và mạng wifi:</p>
+		<a href=".\image\sosanh.png"><img src=".\image\sosanh.png" align="center" style="margin: 0px auto; display: block; width: 90%;"></a>
+		<p>Nhận xét: Trong khi gửi liên tục 1024 tín hiệu tới server nhanh nhất có thể thì giao thức MQTT đáp ứng tốt hơn HTTPS.</p>
+		<p>Nguyên lí hoạt động của camera IP:</p>
+		<a href=".\image\camera.png"><img src=".\image\camera.png" align="center" style="margin: 0px auto; display: block; width: 90%;"></a>
+		<p>Sau khi cấp nguồn cho camera IP và cấu hình kết nối tới modem wifi, thì người dùng hoàn toàn có thể thiết lập, điều khiển camera giám sát thông qua các phần mềm trung gian, hoặc lưu trữ thông qua dữ liệu đám mây,… bằng các thiết bị như: máy tính, tivi, điện thoại,… Sau khi thiết lập kết nối wifi, dữ liệu camera được truyền trực tiếp tới máy tính bằng giao thức RTSP (Real Time Streaming Protocol). Khi xác định được đường dẫn giao thức RTSP của camera, máy tính tiến hành mã hóa dữ liệu từ camera và chuyền đổi sang giao thức RTMP (Real Time Messaging Protocol) và truyền lên máy chủ Youtube bằng phần mềm FFmpeg thông qua kênh livestream của tài khoản Youtube. Lúc này, người dùng có thể giám sát hệ thống thông qua internet một cách dễ dàng và có thể xem camera ở nhà thông qua ứng dụng Youtube từ di động.</p>
+		<div style="padding: 10px;"></div>
+		<h2 align="center" style="margin-bottom: 0px!important;">Phần III</h2>
+		<h3 align="center" style="margin-top: 0px!important;">Mã Nguồn Website Điều Khiển</h3>
+		<img src=".\image\github.png" align="center" style="margin: 0px auto; display: block;" width="300px" height="100px">
+		<div align="center" style="margin-bottom: 20px">Mã nguồn của website điểu khiển được lưu trữ tại <a href="https://github.com/Hercules2404/IoT">Github Server</a>.</div>
+	</div>
+
+	<!--- CONNECT Tab -->
+	<div id="connect" class="main-tab-content">
+		<div class="spliter">
+			<div id="post">
+				<h2 style="color: #e05f00;"> I. Kết nối</h2>
+				<div class="step-border">
+					<h4 style="margin: 0px 0px!important; ">Bước 1: Kết nối đến máy chủ MQTT (MQTT Broker).</h4>
+					<p style="margin: 0px 5px!important; color: #709bff;">* Đây là bước bắt buộc trước khi có thể điều khiển được các thiết bị trong mục điều khiển.</p>
+					<table>
+						<tr>
+							<td>Topic subscribe:</td>
+							<td><div class="topic-input"> <input type="input" id="topic_subscribe" placeholder="Topic Subscribe" title="Topic đăng kí nhận tín hiệu từ ESP8266"></div></td>
+						</tr>
+						<tr>
+							<td>Topic publish:</td>
+							<td><div class="topic-input"> <input type="input" id="topic_publish" placeholder="Topic Publish" title="Topic gửi tín hiệu đến ESP8266"></div></td>
+						</tr>
+					</table>
+					
+					<button id="btn_connect_server" class="btn btn-large" title="Kết nối đến máy chủ MQTT thông qua giao thức WebSocket.io">Kết nối MQTT</button>
+				</div>
+
+				<div class="step-border">
+					<h4>Bước 2: Kết nối đến thiết bị IoT (ESP8266).</h4>
+					<button id="btn_connect_esp8266" class="btn btn-large" title="Gửi lệnh kết nối đến thiết bị điều khiển bằng web">Kết nối ESP8266</button>
+				</div>
+
+				<div class="step-border">
+					<h4>Bước 3: Kiểm tra tình trạng hoạt động của hệ thống.</h4>
+					<button id="btn_device_test" class="btn btn-large" title="Kiểm tra tình trạng hoạt động của thiết bị">Kiểm tra hệ thống</button>
+				</div>
+			</div>
+			<div id="middle_line"></div>
+			<div id="sidebar">
+				<h2 style="color: #e05f00;"> II. Bảng hoạt động của hệ thống</h2>
+			    <label class="control control--checkbox">Tự động kéo thanh cuộn xuống khi có chuỗi tin gửi tới. 
+			      <input type="checkbox" checked="checked" id="checkbox-message-scrolldown" />
+			      <div class="control__indicator"></div>
+			    </label>
+				<div class="message">
+					<div class="message-body" id="message-body"></div>
+					<div class="message-control">
+						<input type="text" id="message_command" placeholder="Lệnh điều khiển"></input>
+						<input type="text" id="message_command_value" placeholder="Nội dung lệnh (không bắt buộc)"></input>
+						
+						<button id="btn_message_send" title="Gửi tín hiệu điều khiển">Command</button>
+						<script type="text/javascript" src="./js/message.js"></script>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div style="padding-top: 30px;"></div>
+		<h2 style="color: #e05f00;"> III. Danh sách các lệnh điều khiển</h2>
+		<div style="font-size: 14px;">
+			<h3>1. Lệnh điều khiển role</h3>
+			<b>* Bật, tắt thiết bị</b>
+			<ul>
+				<li><div>Cấu trúc câu lệnh: <i>role{number} = {state}</i></div></li>
+				<li><div>Tham số:</div></li>
+				<div>{number} : số thứ tự của role (bắt đầu từ 1). Xem khai báo trong Arduino Uno R3.</div>
+				<div>{state} : thiết đặt trạng thái cho thiết bị. Thay thế bằng "on" nếu bật thiết bị và tắt thiết bị được thay thế bằng "off".</div>
+			</ul>
+			<b>* Xem trạng thái của thiết bị</b>
+			<ul>
+				<li><div>Cấu trúc câu lệnh: <i>role_getstate=""</i></div></li>
+				<li><div>Tham số: không có.</div></li>
+			</ul>
+			<h3>2. Lệnh điều khiển màn hình LCD</h3>
+			<b>* Hiện thông báo</b>
+			<ul>
+				<li><div>Cấu trúc câu lệnh: <i>lcd_msg = {message}</i></div></li>
+				<li>
+					<div>Tham số:</div>
+					<div>{message} : Nội dung thông báo sẽ được hiển thị lên dòng thứ 3, căn lề giữa.</div>
+				</li>
+			</ul>
+			<b>* Hiện kí tự tại vị trí bất kì</b>
+			<ul>
+				<li><div>Cấu trúc câu lệnh: <i>lcd_xy = {x}, {y}, {message}</i></div></li>
+				<li>
+					<div>Tham số:</div>
+					<div>{x} : vị trí ô ghi trên một dòng. Giá trị từ [0, 19].</div>
+					<div>{y} : vị trí của dòng. Giá trị từ [0, 3].</div>
+					<div>{message} : Nội dung thông báo sẽ được hiển thị tại tọa độ (x, y).</div>
+				</li>
+			</ul>
+			<h3>3. Lệnh điều khiển đồng hồ thời gian thực</h3>
+			<b>* Lấy giá trị giờ hiện tại của hệ thống</b>
+			<ul>
+				<li><div>Cấu trúc câu lệnh: <i>clock = get_time</i></div></li>
+				<li><div>Tham số: Không có.</div></li>
+			</ul>
+		</div>
+
+		<div style="padding-bottom: 100px;"></div>
+		<script type="text/javascript">
+			// Control Click event listener
+			$("btn_connect_server").onclick = btn_server;
+			$("btn_connect_esp8266").onclick = esp8266_device;
+			$("btn_message_send").onclick = message_send;
+			$("btn_device_test").onclick = btn_device_test;
+		</script>
+	</div>
+
+	<!--- Control Tab -->
+	<div id="control" class="main-tab-content">
+		<h2 style="text-align: center;">Nhà Mô Hình</h2>
+		<div class="home-control">
+			<img src="./image/all_role_on36.png" onclick="all_role_on()" title="Bật tất cả thiết bị">
+			<img src="./image/all_role_off36.png" onclick="all_role_off()" title="Tắt tất cả thiết bị">
+			<img src="./image/auto.png" onclick="all_role_auto()" title="Tự động bật lần lượt từng thiết bị">
+			<img src="./image/refresh36.png" onclick="all_role_refresh()" title="Làm mới dữ liệu">
+		</div>
+		<div class="spliter2">
+			<div id="mohinh_left">
+				<div class="table-mohinh">
+					<table align="center" id="table_mohinh">
+						<tr>
+							<th width="10%" >STT</th>
+							<th width="50%">Vị trí</th>
+							<th>Trạng thái</th>
+						</tr>
+
+						<tr>
+							<td>1</td>
+							<td>Role số 1</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_5" onclick="slider(5)">
+							    <label for="slider_5">
+							  </div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>2</td>
+							<td>Role số 2</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_6" onclick="slider(6)">
+							    <label for="slider_6">
+							  </div>
+							</td>
+						</tr>	
+
+						<tr>
+							<td>3</td>
+							<td>Role số 3</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_7" onclick="slider(7)">
+							    <label for="slider_7">
+							  </div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>4</td>
+							<td>Role số 4</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_8" onclick="slider(8)">
+							    <label for="slider_8">
+							  </div>
+							</td>
+						</tr>	
+
+						<tr>
+							<td>5</td>
+							<td>Role số 5</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_9" onclick="slider(9)">
+							    <label for="slider_9">
+							  </div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>6</td>
+							<td>Role số 6</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_10" onclick="slider(10)">
+							    <label for="slider_10">
+							  </div>
+							</td>
+						</tr>	
+
+						<tr>
+							<td>7</td>
+							<td>Role số 7</td>
+							<td>
+							  <div class="slider">
+							    <input type="checkbox" id="slider_11" onclick="slider(11)">
+							    <label for="slider_11">
+							  </div>
+							</td>
+						</tr>		
+					</table>
+				</div>
+			</div>
+
+			<div></div>
+
+
+			<div id="middle_line2"></div>
+			<div id="mohinh_right">
+				<div class="sensor-gui">
+					<div class="sensor-control" id="btn_nhietdo" onclick="btn_nhietdo()" title="Chuyển sang độ C hoặc độ F.">
+						<img src="./image/doC_64.png" id="nhietdo_image">
+						<div style="display: inline-block; vertical-align: middle;">
+							<name>Nhiệt độ</name>
+							<br>
+							<data id="cambien_nhietdo">collecting...</data>
+						</div>
+					</div>
+
+
+					<div class="sensor-control" id="btn_doam" onclick="btn_doam()" title="Độ ẩm không khí">
+						<img src="./image/doam64.png">
+						<div style="display: inline-block; vertical-align: middle;">
+							<name>Độ ẩm không khí</name>
+							<br>
+							<data id="cambien_doam">collecting...</data>
+						</div>
+					</div>
+					<div class="sensor-control" id="btn_mua" onclick="btn_mua()" title="Cảm biến mưa">
+						<img src="./image/mua64.png" id="mua_image">
+						<div style="display: inline-block; vertical-align: middle;">
+							<name>Cảm biến mưa</name>
+							<br>
+							<data id="cambien_mua">collecting...</data>
+						</div>
+					</div>
+					<div class="sensor-control" id="btn_chedo" onclick="btn_chedo()" title="Chuyển sang chế độ điều khiển hoặc chế độ trình diễn.">
+						<img src="./image/mode64.png">
+						<div style="display: inline-block; vertical-align: middle;">
+							<name>Chế độ hoạt động</name>
+							<br>
+							<data id="cambien_hoatdong">collecting...</data>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<h2 style="text-align: center;">Camera Giám Sát</h2>
+		<div id="youtube-control" style="background-color: #efefef; text-align: center; margin-bottom: 10px;">
+			<div>Ex: https://www.youtube.com/embed/__DIOrn_NZ8</div>
+			<input type="text" id="youtube-link" width="80%" value="https://www.youtube.com/embed/" style="width: 80%;">
+			<br>
+			<button id="youtube-load" onclick="youtube_load()">LOAD</button>
+			<button id="youtube-hide" onclick="youtube_hide()">HIDE</button>
+		</div>
+		<iframe id="youtube-frame" width="75%" height="500px" src="123" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="margin: 0 auto; display: block;"></iframe>
+
+		<div style="margin-top: 20px;"></div>
+		<div class="table-control">
+	 		<table align="center" id="table_control">
+	    		<caption>Bảng Điều Khiển Các Thiết Bị 220VAC</caption>
+				<tr>
+					<th width="10%">STT</th>
+					<th width="40%">Tên thiết bị</th>
+					<th width="20%">Trạng thái</th>
+					<th width="30%">Ghi chú</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>Role số 1</td>
+					<td>
+					<div class="slider">
+					<input type="checkbox" id="slider_1" onclick="slider(1)">
+					<label for="slider_1">
+					</div>
+					</td>
+					<td>...</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>Role số 2</td>
+					<td>
+					  <div class="slider">
+					    <input type="checkbox" id="slider_2" onclick="slider(2)">
+					    <label for="slider_2">
+					  </div>
+					</td>
+					<td>...</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>Role số 3</td>
+					<td>
+					  <div class="slider">
+					    <input type="checkbox" id="slider_3" onclick="slider(3)">
+					    <label for="slider_3">
+					  </div>
+					</td>
+					<td>...</td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>Role số 4</td>
+					<td>
+					  <div class="slider">
+					    <input type="checkbox" id="slider_4" onclick="slider(4)">
+					    <label for="slider_4">
+					  </div>
+					</td>
+					<td>...</td>
+				</tr>
+			</table>
+		</div>
+		<div style="margin-top: 100px;"></div>
+	</div>
+	
+	<div style="text-align: center; margin-top: 15px; margin-bottom: 15px; font-size: 14px;">This website is deployed in Feburary, 2018 for IoT project.
+		<div class="link-effect">More information: <a href="mailto:ducduc08@gmail.com">email address</a></div>
+	</div>
+</body>
+</html>
